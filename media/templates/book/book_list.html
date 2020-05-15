@@ -1,0 +1,9 @@
+{% extends 'shared/site.html' %} 
+{% block body %}
+    {% for book in book_list %}
+        {{ book.title }}
+        <br>
+        {{ book.summary }}
+        <br><br>
+    {% endfor %}
+{% endblock %}

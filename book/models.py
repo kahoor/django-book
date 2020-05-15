@@ -43,7 +43,7 @@ class Author(models.Model):
         ordering = ["last_name", "first_name"]
 
     def __str__(self):
-        return "{}, {}".format(self.last_name, self.first_name)
+        return "{} {}".format(self.last_name, self.first_name)
 
 
 class BookInstance(models.Model):
@@ -73,4 +73,4 @@ class BookInstance(models.Model):
         ordering = ["due_back"]
 
     def __str__(self):
-        return "{}, {}".format(self.id, self.book.title)
+        return "{} ({})".format(self.id, self.book.title)
