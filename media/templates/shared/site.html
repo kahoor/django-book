@@ -5,12 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Book</title>
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" />
 </head>
 <body>
     {% block body %}
     {% endblock %}
+
+    {% if user.is_authenticated %}
+        <p>hello user</p>
+        <a href="{% url 'logout' %}"><button class="btn">fuckout</button></a>
+    {% endif %}
     
 </body>
 </html>
