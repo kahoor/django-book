@@ -1,17 +1,26 @@
+import datetime
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
+from django.shortcuts import HttpResponseRedirect
 from django.views import generic
+from django.urls import reverse_lazy
 
 
 # this is for times a url can only access by users and the the view is functionbase
 from django.contrib.auth.decorators import login_required
 # this is for times a url can only access by some soort of vip user or somthing like that
 from django.contrib.auth.decorators import user_passes_test
+# this is for times a url can only access by some soort of vip user or somthing like that
+from django.contrib.auth.decorators import permission_required
 
 # this is for times a url can only access by users and the the view is generic base
 from django.contrib.auth.mixins import LoginRequiredMixin
 # this is for times a url can only access by some soort of vip user or somthing like that
 from django.contrib.auth.mixins import UserPassesTestMixin
+# this is for times a url can only access by some soort of vip user or somthing like that
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
+from .forms import RenewBookForm
 
 from .models import Book
 from .models import BookInstance
@@ -24,6 +33,7 @@ def email_chek(user):
 
 @login_required
 @user_passes_test(email_chek)
+@permission_required('can_read_ps')
 def index(request):
     num_books = Book.objects.count()
     num_instances = BookInstance.objects.count()
@@ -41,6 +51,36 @@ def index(request):
     }
 
     return render(request, 'book/index.html', context)
+
+@login_required
+@permission_required('librarian')
+def renew_book_librarian(request, pk):
+    book_ins = get_object_or_404(BookInstance, pk=pk)
+
+    if request.method=="POST":
+        form = RenewBookForm(request.POST)
+
+        if form.is_valid():
+            book_ins.due_back = form.cleaned_data['renewaldate']
+            book_ins.save()
+
+            return HttpResponseRedirect(reverse_lazy('book:booklist'))
+
+    else:
+        p_rd = datetime.date.today()+datetime.timedelta(weeks=3)
+        form = RenewBookForm(initial={'renewaldate': p_rd})
+    
+    context = {
+        'form': form,
+        'book_ins': book_ins
+    }
+
+    return render(
+        request,
+        'book/renewaldate.html',
+        context
+    )
+
 
 
 # this type of views are caled generic_display, you can find them in document
@@ -70,8 +110,22 @@ class BookListView(generic.ListView):
         return context
     
 
-class BookDetailView(LoginRequiredMixin, UserPassesTestMixin, generic.DetailView):
+class BookDetailView(LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin, generic.DetailView):
     model = Book
+    permission_required = 'can_read_ps'
 
     def test_func(self):
         return self.request.user.email.endswith("yahoo.com")
+
+
+class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
+    model = BookInstance
+    template_name = 'book/bookinstance_list_borrower.html'
+    paginate_by = 2
+    
+    def get_queryset(self):
+        queryset = super(LoanedBooksByUserListView, self).get_queryset()
+        queryset = queryset.filter(borrower=self.request.user).order_by('due_back')
+        return queryset
+
+

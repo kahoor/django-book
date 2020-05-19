@@ -1,0 +1,16 @@
+{% extends 'shared/site.html' %} 
+{% block title %} Booklist {% endblock %}
+{% block body %}
+    {% if bookinstance_list %}
+        <ul>
+
+            {% for i in bookinstance_list %}
+                <li class="{% if i.is_overdue %} text-danger {% else %} text-white {% endif %}">
+                    <a href="{% url 'book:bookdetail' i.book.pk %}">{{i.book.title}}</a>
+                </li>
+
+            {% endfor %}
+
+        </ul>
+    {% endif %}
+{% endblock %}
