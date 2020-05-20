@@ -23,9 +23,7 @@ class Book(models.Model):
     title = models.CharField(max_length=250, help_text='Enter book title')
     summary = models.TextField(max_length=2000, help_text='Enter a description of book')
     isbn = models.CharField(max_length=13, help_text='barcode khodmoone yejooraye')
-    
     ganre = models.ManyToManyField(Ganre, help_text='Enter a ganre or more for the book')
-    
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True)
 
     def __str__(self):

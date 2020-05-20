@@ -20,6 +20,9 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 # this is for times a url can only access by some soort of vip user or somthing like that
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
+from rest_framework import generics
+
+from .serializers import BookSerializer
 from .forms import RenewBookForm
 
 from .models import Book
@@ -129,3 +132,11 @@ class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
+class APIListCreateBook(generics.ListCreateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    
+class ApiRetrieveUpdateDestroyBook(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    

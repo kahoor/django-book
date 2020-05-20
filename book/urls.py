@@ -9,4 +9,6 @@ urlpatterns = [
     path('<int:pk>/', views.BookDetailView.as_view(), name='bookdetail'),
     path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='loanedbooksbyuser'),
     path('<uuid:pk>/renew/', views.renew_book_librarian, name="bookrenew"),
+    re_path(r'get/', views.APIListCreateBook.as_view(), name='bookslistapi'),
+    re_path(r'^update/(?P<pk>\d+)/$', views.ApiRetrieveUpdateDestroyBook.as_view(), name='bookudapi')
 ]

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 ]
 
 INSTALLED_APPS.append('book.apps.BookConfig')
+INSTALLED_APPS.append('rest_framework')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,3 +134,14 @@ STATICFILES_DIRS = (
 )
 
 STATIC_ROOTS = os.path.join(BASE_DIR, 'staticfiles')
+
+# restframework
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+}
